@@ -4,7 +4,7 @@ import nl.in4392.master.MasterActor
 import com.typesafe.config.ConfigFactory
 import akka.kernel.Bootable
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
-import nl.in4392.models.Task.Task
+import main.scala.nl.in4392.models.Task.Task
 import java.io._
 class MasterService extends Bootable {
 

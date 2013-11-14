@@ -3,7 +3,7 @@ import com.typesafe.config.ConfigFactory
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
 import akka.actor.ActorLogging
 import akka.actor.ActorPath
-import nl.in4392.models.DistributedProtocol.WorkerRegister
+import main.scala.nl.in4392.models.DistributedProtocol.WorkerRegister
 import main.scala.nl.in4392.models.DistributedProtocol.MonitorRegister
 import scala.concurrent.duration._
 

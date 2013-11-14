@@ -1,8 +1,8 @@
 package main.scala.nl.in4392.worker
 
 
-import nl.in4392.models.Task.TaskResult
-import nl.in4392.models.Task._
+import main.scala.nl.in4392.models.Task.TaskResult
+import main.scala.nl.in4392.models.Task._
 
 import akka.actor.Actor
 import java.io._

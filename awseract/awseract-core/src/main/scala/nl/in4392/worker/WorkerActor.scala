@@ -31,7 +31,7 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
       master ! WorkerRequestTask(workerId)
     case task: Task =>
       println("got a job!! ")
-      println("Job info: id {}, job {}",task.taskId)
+      println("Job info: id {}, job {}",task.taskId, task.taskInfo.toString)
       jobExecutor ! task
       context.become(stateWorking())
   }

@@ -80,7 +80,7 @@ class MasterActor extends Actor with ActorLogging {
           if (task.taskId == taskId){
             log.debug("Task {} is completed by worker {}",taskId,workerId)
             workers += (workerId  -> value.copy(status=Idle))
-            println("The result is {}",result.toString)         //here we need to present the result to the webinterface
+            println("The result is {}",result.toString, taskInfo.toString())         //here we need to present the result to the webinterface
             //add some ack
           }
         case _ => println("[Master][TaskCompleted] I dunno how I came here")
@@ -89,7 +89,7 @@ class MasterActor extends Actor with ActorLogging {
       workers.get(workerId) match {
         case Some(value @ WorkerState(_,Working(task))) =>
           if (task.taskId == taskId){
-            log.debug("Task {} failed by worker {}",taskId,workerId)
+            log.debug("Task {} failed by worker {}",taskId,workerId, taskInfo.toString())
             workers += (workerId  -> value.copy(status=Idle))  //maybe not the best way to do, since we should investigate the error (we need to send some standard error cases)
             jobQueue = jobQueue enqueue task
             notifyWorkers() //assign this task to another work
@@ -98,7 +98,7 @@ class MasterActor extends Actor with ActorLogging {
       }
 
     case task: Task =>
-      println("Received task: {}", task)
+      println("Received task: {}", task.taskInfo.toString())
       jobQueue = jobQueue enqueue task
       notifyWorkers()
 

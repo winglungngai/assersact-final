@@ -6,6 +6,9 @@ import akka.kernel.Bootable
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
 import main.scala.nl.in4392.models.Task.Task
 import java.io._
+import java.util.UUID
+import nl.tudelft.ec2interface.taskmonitor.TaskInfo
+
 class MasterService extends Bootable {
 
   val system = ActorSystem("MasterNode", ConfigFactory.load().getConfig("masterSys"))
@@ -17,13 +20,21 @@ class MasterService extends Bootable {
 
   def testTasks(): Unit = {
 
-    masterActor ! new Task("aws-task-1","Hello Daniel! I am the first task")
+    //masterActor ! new Task("aws-task-1","Hello Daniel! I am the first task")
 
     val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_2.JPG"))
     val byteArray = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
     //val inputStream = new FileInputStream(imageFile)
-    masterActor ! new Task("aws-task-2",byteArray)
+    var tInfo = new TaskInfo()
+    val taskId = UUID.randomUUID().toString
+    tInfo.setUuid(taskId)
+    tInfo.setMasterId("DefaultMasterID")
+    tInfo.setWorkerId("DefaultWorkerID")
+    tInfo.setTaskSize(12)
+    //change it to correct values;
+
+    masterActor ! new Task(taskId, byteArray, tInfo)
   }
 
 

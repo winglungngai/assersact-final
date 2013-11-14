@@ -22,6 +22,7 @@ import main.scala.nl.in4392.models.DistributedProtocol.TaskFailed
 import main.scala.nl.in4392.models.DistributedProtocol.WorkerRequestTask
 import nl.tudelft.ec2interface.taskmonitor.TaskInfo
 import java.sql.Timestamp
+import nl.tudelft.ec2interface.logging.LogManager
 
 class MasterActor extends Actor with ActorLogging {
   import nl.tudelft.ec2interface._
@@ -84,6 +85,7 @@ class MasterActor extends Actor with ActorLogging {
           if (task.taskId == taskId){
             log.debug("Task {} is completed by worker {}",taskId,workerId)
             workers += (workerId  -> value.copy(status=Idle))
+            new LogManager().logTask(new TaskInfo().FromJson(taskInfo))
             println("The result is {}",result.toString, taskInfo.toString())         //here we need to present the result to the webinterface
             //add some ack
           }

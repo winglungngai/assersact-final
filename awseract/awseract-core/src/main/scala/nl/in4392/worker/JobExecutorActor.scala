@@ -12,15 +12,15 @@ import scala.sys.process._
 class JobExecutorActor extends Actor {
   def receive = {
 
-    case Task(taskId,job)  => job match{
+    case Task(taskId,job,taskInfo)  => job match{
       case s: String =>
         //do tessearct stuff here
         val result = "Hi! I am not yet implemented. Come back another time! " + job
-        sender ! TaskResult(taskId,result)
+        sender ! TaskResult(taskId,result,taskInfo)
       case byte: Array[Byte] =>
         storeImage(byte,"output_img")
         val result = extractText("output_img")
-        sender ! TaskResult(taskId,result)
+        sender ! TaskResult(taskId,result,taskInfo)
     }
   }
 

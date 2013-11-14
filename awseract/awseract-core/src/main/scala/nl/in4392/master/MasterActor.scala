@@ -74,7 +74,7 @@ class MasterActor extends Actor with ActorLogging {
         case Some(WorkerState(_,Working(_))) => println("The worker {} still working on another task",workerId)
         case _ => None
       }
-    case TaskCompleted(workerId,taskId,result) =>
+    case TaskCompleted(workerId,taskId,result,taskInfo) =>
       workers.get(workerId) match {
         case Some(value @ WorkerState(_,Working(task))) =>
           if (task.taskId == taskId){
@@ -85,7 +85,7 @@ class MasterActor extends Actor with ActorLogging {
           }
         case _ => println("[Master][TaskCompleted] I dunno how I came here")
       }
-    case TaskFailed(workerId,taskId) =>
+    case TaskFailed(workerId,taskId,,taskInfo) =>
       workers.get(workerId) match {
         case Some(value @ WorkerState(_,Working(task))) =>
           if (task.taskId == taskId){

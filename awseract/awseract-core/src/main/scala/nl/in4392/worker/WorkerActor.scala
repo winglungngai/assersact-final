@@ -38,9 +38,9 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
 
   def stateWorking(): Receive = {
 
-    case TaskResult(taskId,result) =>
+    case TaskResult(taskId,result,taskInfo) =>
       println("Task Finished. Result {}.", result)
-      master ! TaskCompleted(workerId,taskId,result)
+      master ! TaskCompleted(workerId,taskId,result,taskInfo)
       master ! WorkerRequestTask(workerId)
       context.become(stateIdle)
 

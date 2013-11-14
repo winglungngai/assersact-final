@@ -1,4 +1,0 @@
-{
-  "publicIP" : "127.0.0.1:2556",
-  "actorPath" : "akka.tcp://MasterNode@127.0.0.1:2556/user/masterActor"
-}

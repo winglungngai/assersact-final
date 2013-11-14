@@ -1,0 +1,35 @@
+package main.scala.nl.in4392.worker
+import com.typesafe.config.ConfigFactory
+import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
+import akka.actor.ActorLogging
+import akka.actor.ActorPath
+import nl.in4392.models.DistributedProtocol.WorkerRegister
+import main.scala.nl.in4392.models.DistributedProtocol.MonitorRegister
+import scala.concurrent.duration._
+
+
+class MonitorActor(workerId:String,masterPath: ActorPath) extends Actor with ActorLogging {
+  import main.scala.nl.in4392.models.DistributedProtocol.{ReportSystemInfo,RequestSystemInfo}
+  import nl.tudelft.ec2interface.sysmonitor._
+  import context._
+
+  val master = context.actorSelection(masterPath)
+  // val workerId = UUID.randomUUID().toString
+
+  override def preStart() = {
+    println("MonitoringActor " + workerId + " starts")
+    master ! MonitorRegister(workerId)
+
+  }
+
+  def receive = {
+    case RequestSystemInfo =>
+      master ! ReportSystemInfo(workerId, new SystemUsage().ToJson(new SystemUsage().getInfo))
+      println("MonitoringActor " + workerId + " sends SystemInfo")
+      context.system.scheduler.scheduleOnce(20 seconds, self, RequestSystemInfo)
+  }
+
+
+}
+
+

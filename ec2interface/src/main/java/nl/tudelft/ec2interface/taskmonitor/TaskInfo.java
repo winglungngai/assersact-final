@@ -1,9 +1,16 @@
 package nl.tudelft.ec2interface.taskmonitor;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import nl.tudelft.ec2interface.sysmonitor.SystemUsageInfo;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class TaskInfo {
 
@@ -87,6 +94,39 @@ public class TaskInfo {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
 		return dateFormat.format(amsterdam.getTime());
+	}
+
+	public String ToJson(TaskInfo tInfo)
+	{
+		try {
+			
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String json = ow.writeValueAsString(tInfo);
+			return json;
+			
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+			
+		}
+		
+	}
+	
+	public TaskInfo FromJson(String jsonString)
+	{
+
+		try {
+			
+			TaskInfo tInfo = new ObjectMapper().readValue(jsonString, TaskInfo.class);
+			return tInfo;
+			
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	

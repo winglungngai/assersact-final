@@ -34,7 +34,7 @@ class MasterService extends Bootable {
     tInfo.setTaskSize(12)
     //change it to correct values;
 
-    masterActor ! new Task(taskId, byteArray, tInfo)
+    masterActor ! new Task(taskId, byteArray, tInfo.ToJson(tInfo))
   }
 
 

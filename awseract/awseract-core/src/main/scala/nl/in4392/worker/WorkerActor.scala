@@ -8,6 +8,8 @@ import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
 import akka.actor.ActorLogging
 import akka.actor.ActorPath
 import java.util.UUID
+import nl.tudelft.ec2interface.taskmonitor.TaskInfo
+import java.sql.Timestamp
 
 class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with ActorLogging {
 
@@ -31,8 +33,10 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
       master ! WorkerRequestTask(workerId)
     case task: Task =>
       println("got a job!! ")
+      var tInfo = new TaskInfo().FromJson(task.taskInfo)
+      tInfo.setStartTime(new Timestamp(System.currentTimeMillis()))
       println("Job info: id {}, job {}",task.taskId, task.taskInfo.toString)
-      jobExecutor ! task
+      jobExecutor ! new Task(task.taskId,task.job,new TaskInfo().ToJson(tInfo))
       context.become(stateWorking())
   }
 
@@ -40,7 +44,10 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
 
     case TaskResult(taskId,result,taskInfo) =>
       println("Task Finished. Result {}.", result)
-      master ! TaskCompleted(workerId,taskId,result,taskInfo)
+      var tInfo = new TaskInfo().FromJson(taskInfo)
+      tInfo.setFinishTime(new Timestamp(System.currentTimeMillis()))
+
+      master ! TaskCompleted(workerId,taskId,result,new TaskInfo().ToJson(tInfo))
       master ! WorkerRequestTask(workerId)
       context.become(stateIdle)
 

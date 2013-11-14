@@ -20,6 +20,8 @@ import main.scala.nl.in4392.models.DistributedProtocol.WorkerRegister
 import main.scala.nl.in4392.models.Task.Task
 import main.scala.nl.in4392.models.DistributedProtocol.TaskFailed
 import main.scala.nl.in4392.models.DistributedProtocol.WorkerRequestTask
+import nl.tudelft.ec2interface.taskmonitor.TaskInfo
+import java.sql.Timestamp
 
 class MasterActor extends Actor with ActorLogging {
   import nl.tudelft.ec2interface._
@@ -67,8 +69,10 @@ class MasterActor extends Actor with ActorLogging {
             case(x,xs) =>
               jobQueue = xs
               workers += (workerId -> value.copy(status = Working(x)))        //dunno why copy is used, but it was the only option apparently, i just wanted to update
+              var tInfo = new TaskInfo().FromJson(x.taskInfo)
+              tInfo.setTransferTime(new Timestamp(System.currentTimeMillis()))
+              sender ! new Task(x.taskId,x.job,new TaskInfo().ToJson(tInfo))
               println("The following task {} is handled by worker {}",x.job,workerId)
-              sender ! x
             case _ =>
           }
         case Some(WorkerState(_,Working(_))) => println("The worker {} still working on another task",workerId)
@@ -99,7 +103,10 @@ class MasterActor extends Actor with ActorLogging {
 
     case task: Task =>
       println("Received task: {}", task.taskInfo.toString())
-      jobQueue = jobQueue enqueue task
+      var tInfo = new TaskInfo().FromJson(task.taskInfo)
+      tInfo.setReceiveTime(new Timestamp(System.currentTimeMillis()))
+
+      jobQueue = jobQueue enqueue new Task(task.taskId,task.job,new TaskInfo().ToJson(tInfo))
       notifyWorkers()
 
 

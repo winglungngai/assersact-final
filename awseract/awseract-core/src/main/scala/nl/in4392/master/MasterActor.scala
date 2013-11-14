@@ -23,6 +23,8 @@ import main.scala.nl.in4392.models.DistributedProtocol.WorkerRequestTask
 import nl.tudelft.ec2interface.taskmonitor.TaskInfo
 import java.sql.Timestamp
 import nl.tudelft.ec2interface.logging.LogManager
+import main.scala.nl.in4392.worker.JobExecutorActor
+import main.scala.nl.in4392.master.InstanceManagerActor
 
 class MasterActor extends Actor with ActorLogging {
   import nl.tudelft.ec2interface._
@@ -34,8 +36,23 @@ class MasterActor extends Actor with ActorLogging {
   private var workers = Map.empty[String,WorkerState]
   private var watchers = Map.empty[String,ActorRef]
 
+  val system = ActorSystem("InstanceManager")
+  // default Actor constructor
+  val instancemanager = system.actorOf(Props[InstanceManagerActor], "insmanager")
+
+
+  override def preStart() = {
+    println("Instancemanager starts")
+    instancemanager ! StartInstanceManager
+
+  }
+
+
+
   def receive = {
 
+    case RequestSystemStatus =>
+      sender ! SystemStatus(jobQueue.size, workers)
 
     case MonitorRegister(workerId) =>
       if(!watchers.contains(workerId)){

@@ -32,13 +32,13 @@ class InstanceManagerActor extends Actor with ActorLogging {
     case ManageInstance =>
       println("Got a message abou the current system stat")
       masterActor ! RequestSystemStatus
-      context.system.scheduler.scheduleOnce(120 seconds, self, ManageInstance)
+      context.system.scheduler.scheduleOnce(30 seconds, self, ManageInstance)
 
     case SystemStatus(jobSize, workers) =>
       //println("print system status. and joseph did some logic here", status)
       val workers_idle = workers.filter { case (_, WorkerState(_,x)) => x == Idle }
       val jobs_count = jobSize
-    println("job queue numbers",jobSize)
+      println("job queue numbers",jobSize)
       val idle_size = workers_idle.size
       println("Joseph is genius ", workers_idle.size)
 

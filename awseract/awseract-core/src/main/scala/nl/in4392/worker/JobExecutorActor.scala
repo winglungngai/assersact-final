@@ -30,7 +30,13 @@ class JobExecutorActor extends Actor {
     out.close()
   }
 
-  def extractText(filename: String): String = Seq("ls").!!
+  // Dummy extract
+ // def extractText(filename: String): String = Seq("ls").!!
+
+  def extractText(filename: String)={
+    if(Seq("tesseract",filename,"output","-l","eng").! == 0)
+      Seq("cat","output.txt").!!
+  }
 
 
 }

@@ -1,2 +1,2 @@
 cd /home/ubuntu/Project/assersact-final/awseract/awseract-core/
-yes 2 | sbt run
+sbt 'run-main main.scala.nl.in4392.worker.WorkerApp'

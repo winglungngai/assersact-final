@@ -16,6 +16,8 @@ public class RemoteActorInfo {
 	
 	private String publicIP;
 	private String actorPath;
+	private String selfPublicIP;
+	private String selfInstanceID;
 	
 	public String getPublicIP() {
 		return publicIP;
@@ -65,11 +67,29 @@ public class RemoteActorInfo {
 		}
 	}
 	
-	public RemoteActorInfo setInfo(String publicIP, String actorPath)
+	public String getSelfPublicIP() {
+		return selfPublicIP;
+	}
+
+	public void setSelfPublicIP(String selfPublicIP) {
+		this.selfPublicIP = selfPublicIP;
+	}
+
+	public String getSelfInstanceID() {
+		return selfInstanceID;
+	}
+
+	public void setSelfInstanceID(String selfInstanceID) {
+		this.selfInstanceID = selfInstanceID;
+	}
+
+	public RemoteActorInfo setInfo(String publicIP, String actorPath, String selfPublicIP, String selfInstanceID)
 	{
 		RemoteActorInfo maInfo = new RemoteActorInfo();
 		maInfo.setPublicIP(publicIP);
 		maInfo.setActorPath(actorPath);
+		maInfo.setSelfPublicIP(selfPublicIP);
+		maInfo.setSelfInstanceID(selfInstanceID);
 		return maInfo;
 	}
 	
@@ -86,14 +106,16 @@ public class RemoteActorInfo {
 	
 	public static void main(String[] args)
 	{
-		RemoteActorInfo maInfo = new RemoteActorInfo().setInfo("127.0.0.1:2552", "akka.tcp://MasterNode@127.0.0.1:2552/user/masterActor");
+		RemoteActorInfo maInfo = new RemoteActorInfo().setInfo("127.0.0.1:2552", "akka.tcp://MasterNode@127.0.0.1:2552/user/masterActor", "selfPublicIP", "selfInstanceID");
 		
 		String maInfoString = maInfo.ToJson(maInfo).toString();
 		
 		System.out.println(maInfoString);
 		System.out.println(maInfo.FromJson(maInfoString).getPublicIP());
 		System.out.println(maInfo.FromJson(maInfoString).getActorPath());
-		System.out.println(new RemoteActorInfo().getInfoFromFile("masterInfo").getPublicIP());
+		System.out.println(maInfo.FromJson(maInfoString).getSelfPublicIP());
+		System.out.println(maInfo.FromJson(maInfoString).getSelfInstanceID());
+		System.out.println(new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP());
 		
 	}
 

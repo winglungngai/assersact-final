@@ -39,7 +39,7 @@ public class EC2Interface {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
 		String instanceId = ec2.runNewInstance("ami-22dcea67");
 		//System.out.println(ec2.getInstanceInfo(instanceId));
-		//ec2.configureInstance(instanceId, "conf/initInstance.sh", "conf/joseph_wing.pem");
+		//ec2.configureInstance("masterip", instanceId, "conf/remoteConfigure.sh", "conf/joseph_wing.pem");
 		//System.out.println(ec2.getInstanceList().toString());
 		//ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});
@@ -144,7 +144,7 @@ public class EC2Interface {
 		return instanceIds;
 	}
 	
-	public void configureInstance(String instanceId, String scriptFilePath, String keyFilePath)
+	public void configureInstance(String masterPublicIP, String instanceId, String scriptFilePath, String keyFilePath)
 	{
 		boolean configured = false;
 		
@@ -157,7 +157,7 @@ public class EC2Interface {
 				if (iInfo.getStatus().equals("running")) {
 					System.out.println("-->SSH Connection to IP " + iInfo.getPublicIP() + ", the configuration process will be terminated after 10 minutes.");
 					
-					execConfigurationTask(new InstanceConfigurator(iInfo.getPublicIP(), scriptFilePath, keyFilePath));
+					execConfigurationTask(new InstanceConfigurator(masterPublicIP, iInfo.getId(), iInfo.getPublicIP(), scriptFilePath, keyFilePath));
 					configured = true;
 				}
 				else
@@ -195,13 +195,17 @@ public class EC2Interface {
 	
 	public static class InstanceConfigurator implements Callable<String>
     {
-        private String publicIP;
+        private String selfPublicIP;
+        private String selfInstanceID;
         private String scriptFilePath;
         private String keyFilePath;
-
-        public InstanceConfigurator (String publicIP, String scriptFilePath, String keyFilePath)
+        private String masterPublicIP;
+        
+        public InstanceConfigurator (String masterPublicIP, String selfInstanceID, String selfPublicIP, String scriptFilePath, String keyFilePath)
         {
-            this.publicIP = publicIP;
+        	this.masterPublicIP = masterPublicIP;
+        	this.selfInstanceID = selfInstanceID;
+            this.selfPublicIP = selfPublicIP;
             this.scriptFilePath = scriptFilePath;
             this.keyFilePath = keyFilePath;
         }
@@ -210,7 +214,7 @@ public class EC2Interface {
         public String call() throws Exception {
 
     		try {
-    			final ProcessBuilder pb = new ProcessBuilder("/bin/sh", scriptFilePath, publicIP , keyFilePath);
+    			final ProcessBuilder pb = new ProcessBuilder("/bin/sh", scriptFilePath, selfPublicIP , keyFilePath, masterPublicIP, selfPublicIP, selfInstanceID);
     			pb.directory(new File("."));
     			pb.redirectErrorStream(true);
     			final Process p = pb.start();

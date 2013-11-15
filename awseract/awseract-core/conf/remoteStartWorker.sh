@@ -6,8 +6,9 @@ chmod 400 $2
 
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $2 ubuntu@$1 '
 
-cd ~/Project/assersact-final/
-git pull
+export _JAVA_OPTIONS="-Xms256M -Xmx512M"
+cd ~/Project/assersact-final/awseract/awseract-core/conf/
+sudo chmod a+x startWorker.sh
 ~/Project/assersact-final/awseract/awseract-core/conf/startWorker.sh
 
  '

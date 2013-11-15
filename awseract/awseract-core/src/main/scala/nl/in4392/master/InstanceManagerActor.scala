@@ -45,7 +45,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
       val ec2 = new EC2Interface("conf/AwsCredentials.properties")
 
       if(jobs_count > 100 ||  workers.size < 3 )  {
-        println("> 100 jobs pending", jobs_count)
+        println("> 100 jobs pending {} or less than 3 workers {}", jobs_count, workers.size)
         val instanceId = ec2.runNewInstance("ami-2890a66d");
         val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()
         ec2.configureInstance(masterPublicIP, instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
@@ -55,6 +55,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
       {
         if ( workers.size > 1 && workers.size/idle_size < 3)
         {
+          println("> more than 1 workers and worker/idle < 3", workers.size, idle_size)
           val toDeleted = workers_idle.keys.last
           ec2.terminateInstance(toDeleted)
           masterActor ! WorkerDeregister(toDeleted)

@@ -10,6 +10,12 @@ import scala.sys.process._
 
 
 class JobExecutorActor extends Actor {
+
+  override def postRestart(err:Throwable) = {
+    println("[JobExecutorActor] Restart")
+  }
+
+
   def receive = {
 
     case Task(taskId,job,taskInfo)  => job match{

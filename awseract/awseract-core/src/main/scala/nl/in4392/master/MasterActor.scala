@@ -7,7 +7,7 @@ import main.scala.nl.in4392.models.DistributedProtocol._
 
 import main.scala.nl.in4392.models.Task._
 
-import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
+import akka.actor.{ ActorRef, Props, Actor, ActorSystem, Terminated }
 
 
 import main.scala.nl.in4392.models.WorkerStatusProtocol._
@@ -52,6 +52,9 @@ class MasterActor extends Actor with ActorLogging {
 
   def receive = {
 
+     //http://doc.akka.io/docs/akka/snapshot/scala/actors.html
+    case Terminated(workerPath) =>
+
     case RequestSystemStatus =>
       sender ! SystemStatus(jobQueue.size, workers)
 
@@ -59,6 +62,7 @@ class MasterActor extends Actor with ActorLogging {
       if(!watchers.contains(workerId)){
         watchers += (workerId -> sender)
         println("Registered Watcher: {}",workerId)
+        context.watch(sender)
         sender ! RequestSystemInfo
 
       }

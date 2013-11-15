@@ -38,6 +38,10 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
 
   }
 
+  override def postRestart(err:Throwable) = {
+    println("[Worker] Restart")
+  }
+
 
   def receive = {
     case TaskAvailable  =>

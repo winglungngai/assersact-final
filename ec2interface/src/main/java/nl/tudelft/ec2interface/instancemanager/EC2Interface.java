@@ -37,9 +37,10 @@ public class EC2Interface {
 
 	public static void main(String[] args) throws IOException {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
-		String instanceId = ec2.runNewInstance("ami-3093a575");
+		String instanceId = ec2.runNewInstance("ami-2890a66d");
 		//System.out.println(ec2.getInstanceInfo(instanceId));
-		//ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigure.sh", "conf/joseph_wing.pem");
+		ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureMaster.sh", "conf/joseph_wing.pem");
+		ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
 		//System.out.println(ec2.getInstanceList().toString());
 		//ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});
@@ -155,6 +156,7 @@ public class EC2Interface {
 				
 				InstanceInfo iInfo = getInstanceInfo(instanceId);
 				if (iInfo.getStatus().equals("running")) {
+					System.out.println("ssh -i joseph_wing.pem ubuntu@"+iInfo.getPublicIP());
 					System.out.println("-->SSH Connection to IP " + iInfo.getPublicIP() + ", the configuration process will be terminated after 10 minutes.");
 					
 					execConfigurationTask(new InstanceConfigurator(masterPublicIP, iInfo.getId(), iInfo.getPublicIP(), scriptFilePath, keyFilePath));

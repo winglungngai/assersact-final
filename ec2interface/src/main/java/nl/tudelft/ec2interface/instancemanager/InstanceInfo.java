@@ -37,7 +37,7 @@ public class InstanceInfo {
 		InstanceInfo iInfo = new InstanceInfo();
 		
 		iInfo.setId(instance.getInstanceId());
-		iInfo.setPublicIP(instance.getPublicIpAddress());
+		iInfo.setPublicIP(instance.getPublicDnsName());
 		iInfo.setStatus(instance.getState().getName());
 		
 		return iInfo;

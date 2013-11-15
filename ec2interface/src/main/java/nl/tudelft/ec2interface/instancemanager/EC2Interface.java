@@ -37,9 +37,9 @@ public class EC2Interface {
 
 	public static void main(String[] args) throws IOException {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
-		String instanceId = ec2.runNewInstance("ami-b292a4f7");
+		String instanceId = ec2.runNewInstance("ami-3093a575");
 		//System.out.println(ec2.getInstanceInfo(instanceId));
-		ec2.configureInstance("127.0.0.1", instanceId, "conf/remoteConfigure.sh", "conf/joseph_wing.pem");
+		//ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigure.sh", "conf/joseph_wing.pem");
 		//System.out.println(ec2.getInstanceList().toString());
 		//ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});

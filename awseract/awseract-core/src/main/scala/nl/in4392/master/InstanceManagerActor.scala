@@ -43,15 +43,18 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       if(idle_size > 0)
       {
-        if(jobs_count/idle_size > 10 )  {
+        val  ec2 = new EC2Interface("conf/AwsCredentials.properties")
+
+        if(jobs_count/workers.size > 10 )  {
           println("> 10 jobscount {} idleSize {}", jobs_count, idle_size)
-          val  ec2 = new EC2Interface("conf/AwsCredentials.properties")
-          //val instanceId = ec2.runNewInstance("ami-22dcea67")
+
+          val instanceId = ec2.runNewInstance("ami-2890a66d")
           //println("starting new instance ", instanceId)
           println("starting new instance ")
         }
-        else
+        else if ( (workers.size - idle_size) > 1 && jobs_count/workers.size < 1 )
         {
+          //ec2.terminateInstance(workers_idle{case (x, WorkerState(any,any) => x)})
           println("< 10 jobscount {} idleSize {}", jobs_count, idle_size)
         }
       }

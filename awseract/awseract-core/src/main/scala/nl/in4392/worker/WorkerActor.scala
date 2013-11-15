@@ -10,8 +10,11 @@ import akka.actor.ActorPath
 import java.util.UUID
 import nl.tudelft.ec2interface.taskmonitor.TaskInfo
 import java.sql.Timestamp
+import nl.tudelft.ec2interface.instancemanager._
 
 class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with ActorLogging {
+
+  val instanceId = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getSelfInstanceID
 
   val master = context.actorSelection(masterPath)
  // val workerId = UUID.randomUUID().toString
@@ -34,6 +37,7 @@ class WorkerActor(workerId: String,masterPath: ActorPath) extends Actor with Act
     case task: Task =>
       println("got a job!! ")
       var tInfo = new TaskInfo().FromJson(task.taskInfo)
+      tInfo.setWorkerId(instanceId)
       tInfo.setStartTime(new Timestamp(System.currentTimeMillis()))
       println("Job info: id {}, job {}",task.taskId, task.taskInfo.toString)
       jobExecutor ! new Task(task.taskId,task.job,new TaskInfo().ToJson(tInfo))

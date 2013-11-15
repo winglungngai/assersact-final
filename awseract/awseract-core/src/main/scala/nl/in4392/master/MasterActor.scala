@@ -25,12 +25,14 @@ import java.sql.Timestamp
 import nl.tudelft.ec2interface.logging.LogManager
 import main.scala.nl.in4392.worker.JobExecutorActor
 import main.scala.nl.in4392.master.InstanceManagerActor
+import nl.tudelft.ec2interface.instancemanager._
 
 class MasterActor extends Actor with ActorLogging {
   import nl.tudelft.ec2interface._
   import nl.tudelft.ec2interface.sysmonitor._
   import nl.tudelft.ec2interface.logging._
 
+  val instanceId = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getSelfInstanceID
 
   private var jobQueue = Queue[Task]()
   private var workers = Map.empty[String,WorkerState]
@@ -39,7 +41,6 @@ class MasterActor extends Actor with ActorLogging {
   val system = ActorSystem("InstanceManager")
   // default Actor constructor
   val instancemanager = system.actorOf(Props[InstanceManagerActor], "insmanager")
-
 
   override def preStart() = {
     println("Instancemanager starts")
@@ -123,6 +124,7 @@ class MasterActor extends Actor with ActorLogging {
     case task: Task =>
       println("Received task: {}", task.taskInfo.toString())
       var tInfo = new TaskInfo().FromJson(task.taskInfo)
+      tInfo.setMasterId(instanceId)
       tInfo.setReceiveTime(new Timestamp(System.currentTimeMillis()))
 
       jobQueue = jobQueue enqueue new Task(task.taskId,task.job,new TaskInfo().ToJson(tInfo))

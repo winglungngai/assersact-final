@@ -41,11 +41,10 @@ public class EC2Interface {
 		//System.out.println(ec2.getInstanceInfo(instanceId));
 		
 		//master
-		ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureMaster.sh", "conf/joseph_wing.pem");
-		
+		//ec2.configureInstance("noip", instanceId, "conf/remoteConfigureMaster.sh", "conf/joseph_wing.pem");
 		
 		//worker
-		//ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
+		ec2.configureInstance("ec2-54-219-153-244.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
 		
 		
 		

@@ -75,6 +75,12 @@ class MasterActor extends Actor with ActorLogging {
       if (!workers.contains(workerId)) {
         workers += (workerId -> WorkerState(sender, status = Idle))
         println("Registered Worker: {}",workerId)
+      }
+
+    case WorkerDeregister(workerId) =>
+      if (workers.contains(workerId)) {
+        workers = workers - workerId
+        println("Deregistered Worker: {}",workerId)
 
         if(!jobQueue.isEmpty)
           sender ! TaskAvailable

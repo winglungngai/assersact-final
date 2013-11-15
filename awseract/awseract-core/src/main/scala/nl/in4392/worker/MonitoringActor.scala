@@ -13,6 +13,7 @@ class MonitorActor(workerId:String,masterPath: ActorPath) extends Actor with Act
   import main.scala.nl.in4392.models.DistributedProtocol.{ReportSystemInfo,RequestSystemInfo}
   import nl.tudelft.ec2interface.sysmonitor._
   import context._
+  import nl.tudelft.ec2interface.instancemanager._
 
   val instanceId = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getSelfInstanceID
 

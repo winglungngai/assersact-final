@@ -10,6 +10,7 @@ import scala.concurrent.duration._
 import nl.tudelft.ec2interface.instancemanager.EC2Interface;
 import main.scala.nl.in4392.models.WorkerStatusProtocol.WorkerState
 import main.scala.nl.in4392.models.WorkerStatusProtocol._
+import nl.tudelft.ec2interface.instancemanager._
 
 
 class InstanceManagerActor extends Actor with ActorLogging {
@@ -41,26 +42,27 @@ class InstanceManagerActor extends Actor with ActorLogging {
       val idle_size = workers_idle.size
       println("Joseph is genius ", workers_idle.size)
 
-      if(idle_size > 0)
+      val ec2 = new EC2Interface("conf/AwsCredentials.properties")
+
+      if(jobs_count > 100 )  {
+        println("> 100 jobs pending", jobs_count)
+        val instanceId = ec2.runNewInstance("ami-2890a66d");
+        val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()
+        ec2.configureInstance(masterPublicIP, instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
+        println("starting new worker instance ", instanceId)
+      }
+      else if ( idle_size > 0 )
       {
-        val  ec2 = new EC2Interface("conf/AwsCredentials.properties")
-
-        if(jobs_count/workers.size > 10 )  {
-          println("> 10 jobscount {} idleSize {}", jobs_count, idle_size)
-
-          val instanceId = ec2.runNewInstance("ami-2890a66d")
-          //println("starting new instance ", instanceId)
-          println("starting new instance ")
-        }
-        else if ( (workers.size - idle_size) > 1 && jobs_count/workers.size < 1 )
+        if ( workers.size > 1 && workers.size/idle_size > 3)
         {
-          //ec2.terminateInstance(workers_idle{case (x, WorkerState(any,any) => x)})
-          println("< 10 jobscount {} idleSize {}", jobs_count, idle_size)
+          val toDeleted = workers_idle.keys.last
+          ec2.terminateInstance(toDeleted)
+          masterActor ! WorkerDeregister(toDeleted)
+          println("workersSize / idleSize 3 ", workers.size , idle_size)
         }
+
       }
 
-
-  }
-
+   }
 
 }

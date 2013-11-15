@@ -39,8 +39,16 @@ public class EC2Interface {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
 		String instanceId = ec2.runNewInstance("ami-2890a66d");
 		//System.out.println(ec2.getInstanceInfo(instanceId));
+		
+		//master
 		ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureMaster.sh", "conf/joseph_wing.pem");
-		ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
+		
+		
+		//worker
+		//ec2.configureInstance("ec2-54-215-212-65.us-west-1.compute.amazonaws.com", instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
+		
+		
+		
 		//System.out.println(ec2.getInstanceList().toString());
 		//ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});

@@ -9,6 +9,6 @@ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $2 ubuntu@$1 
 cd ~/Project/assersact-final/awseract/awseract-core/
 git pull
 sudo chmod a+x ~/Project/assersact-final/awseract/awseract-core/conf/configureMaster.sh;
-~/Project/assersact-final/awseract/awseract-core/conf/configure.sh '"$1"' '"$4"' '"$5"';
+~/Project/assersact-final/awseract/awseract-core/conf/configureMaster.sh '"$1"' '"$4"' '"$5"';
 
  '

@@ -1,5 +1,5 @@
 {
-  "publicIP" : "DefaultMasterPublicIP",
+  "publicIP" : "DefaultMasterPublicIP:2556",
   "actorPath" : "akka.tcp://MasterNode@DefaultMasterPublicIP:2556/user/masterActor",
   "selfPublicIP" : "DefaultPublicIP",
   "selfInstanceID" : "DefaultInstanceID"

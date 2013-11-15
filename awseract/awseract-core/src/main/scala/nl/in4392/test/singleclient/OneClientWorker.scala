@@ -4,17 +4,20 @@ import nl.in4392.master.MasterActor
 import com.typesafe.config.ConfigFactory
 import akka.kernel.Bootable
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
+import akka.actor.ActorPath
 import main.scala.nl.in4392.models.Task.Task
 import java.io._
 import java.util.UUID
 import nl.tudelft.ec2interface.taskmonitor.TaskInfo
-import main.scala.nl.in4392.worker.{MonitorActor, WorkerActor}
+import nl.tudelft.ec2interface.instancemanager._
+
 
 class OneClientWorker extends Bootable {
 
 
   val masterActorPath = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getActorPath()
-  val masterActor = context.actorSelection(ActorPath.fromString(masterActorPath))
+  val system = ActorSystem("TestClient")
+  val masterActor = system.actorSelection(ActorPath.fromString(masterActorPath))
 
 
   def startup() {
@@ -117,10 +120,10 @@ class OneClientWorker extends Bootable {
    */
  def testRandom1000: Unit = {
 
-   val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_2.JPG"))
+   var bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_2.JPG"))
    val byteArraySmall = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
-    val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.JPG"))
+    bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.JPG"))
     val byteArrayLarge = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
    var tInfo = new TaskInfo()
@@ -145,11 +148,11 @@ class OneClientWorker extends Bootable {
   }
 }
 
-object MasterApp {
+object OneClientApp {
   def main(args: Array[String]) {
     val app = new OneClientWorker
     println("[TEST][OneClientWorker] Started")
-    app.testRandom1000()
+    app.testRandom1000
 
   }
 }

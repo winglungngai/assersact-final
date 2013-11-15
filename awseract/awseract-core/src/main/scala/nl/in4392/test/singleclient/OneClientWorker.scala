@@ -17,7 +17,7 @@ class OneClientWorker extends Bootable {
 
   val masterActorPath = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getActorPath()
   //the test client need reomte config!!!!!
-  val config = ConfigFactory.load().getConfig("workerSys")
+  val config = ConfigFactory.load().getConfig("testSys")
   val system = ActorSystem("WorkerNode", config)
   val masterActor = system.actorSelection(ActorPath.fromString(masterActorPath))
 

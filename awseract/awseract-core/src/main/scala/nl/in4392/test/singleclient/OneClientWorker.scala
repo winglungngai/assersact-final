@@ -1,4 +1,4 @@
-package singleclient
+package main.scala.nl.in4392.test.singleclient
 
 import nl.in4392.master.MasterActor
 import com.typesafe.config.ConfigFactory
@@ -16,7 +16,9 @@ class OneClientWorker extends Bootable {
 
 
   val masterActorPath = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getActorPath()
-  val system = ActorSystem("TestClient")
+  //the test client need reomte config!!!!!
+  val config = ConfigFactory.load().getConfig("workerSys")
+  val system = ActorSystem("WorkerNode", config)
   val masterActor = system.actorSelection(ActorPath.fromString(masterActorPath))
 
 
@@ -52,7 +54,7 @@ class OneClientWorker extends Bootable {
    */
   def testRequests100Large: Unit = {
 
-    val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.JPG"))
+    val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.PNG"))
     val byteArray = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
     var tInfo = new TaskInfo()
@@ -99,7 +101,7 @@ class OneClientWorker extends Bootable {
    */
   def testRequests1000Large: Unit = {
 
-    val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.JPG"))
+    val bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.PNG"))
     val byteArray = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
     var tInfo = new TaskInfo()
@@ -123,7 +125,7 @@ class OneClientWorker extends Bootable {
    var bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_2.JPG"))
    val byteArraySmall = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
-    bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.JPG"))
+    bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.PNG"))
     val byteArrayLarge = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
    var tInfo = new TaskInfo()

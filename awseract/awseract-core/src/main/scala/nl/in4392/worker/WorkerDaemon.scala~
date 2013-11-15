@@ -11,7 +11,7 @@ class WorkerDaemon extends Bootable {
 
 
   val instanceInfo = new RemoteActorInfo().getInfoFromFile("conf/masterInfo")
-  val workerId = instanceInfo.getSelfInstanceID()
+  val workerId = UUID.randomUUID().toString
   val config = ConfigFactory.load().getConfig("workerSys")
   val system = ActorSystem("WorkerNode", config)
   

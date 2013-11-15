@@ -6,6 +6,7 @@ chmod 400 $2
 
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $2 ubuntu@$1 '
 
+sudo chmod a+x ~/Project/assersact-final/awseract/awseract-core/conf/configure.sh
 ~/Project/assersact-final/awseract/awseract-core/conf/configure.sh '"$3"' '"$4"' '"$5"'
 
  '

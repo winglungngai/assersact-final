@@ -45,7 +45,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       val ec2 = new EC2Interface("conf/AwsCredentials.properties")
 
-      if(jobs_count > 500 || workers.size < 1 )  {
+      if( workers.size < 1 || (jobs_count/workers.size) > 500)  {
         println(" > 0 ={} jobs pending or less than 1 workers {}", jobs_count, workers.size)
         val instanceId = ec2.runNewInstance("ami-028eb847");
         val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()

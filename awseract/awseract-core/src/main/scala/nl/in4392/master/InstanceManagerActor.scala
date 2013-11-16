@@ -33,7 +33,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
     case ManageInstance =>
       println("Got a message abou the current system stat")
       masterActor ! RequestSystemStatus
-      context.system.scheduler.scheduleOnce(30 seconds, self, ManageInstance)
+      context.system.scheduler.scheduleOnce(600 seconds, self, ManageInstance)
 
     case SystemStatus(jobSize, workers) =>
       //println("print system status. and joseph did some logic here", status)
@@ -45,7 +45,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       val ec2 = new EC2Interface("conf/AwsCredentials.properties")
 
-      if(workers.size < 1 )  {
+      if(workers.size < 5 )  {
         println(" > 0 ={} jobs pending or less than 1 workers {}", jobs_count, workers.size)
         val instanceId = ec2.runNewInstance("ami-028eb847");
         val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()

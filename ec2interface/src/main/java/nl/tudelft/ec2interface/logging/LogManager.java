@@ -50,6 +50,14 @@ public class LogManager {
        dbConnector.close();
 	}
 	
+	public void logInstance(String action, int instanceCount)
+	{
+	   dbConnector.executeUpdate(String.format(
+			   "INSERT INTO systemlog.instance (action, instanceCount) "
+			   + "VALUES ('%s', '%d');", action, instanceCount));
+       dbConnector.close();
+	}
+	
 	public List<SystemUsageInfo> readSystemUsageLog()
 	{
 		ResultSet rs = dbConnector.Read("Select * from systemlog.usage");
@@ -126,34 +134,36 @@ public class LogManager {
 	
 	public static void main(String[] args) {
 		
-	      LogManager lManager = new LogManager();
-	      SystemUsageInfo uInfo = new SystemUsage().getInfo();
-	      lManager.logSystemUsage(uInfo);
-	      System.out.println(lManager.readSystemUsageLog());
-	     
-	      try {
-	    	  
-	    	  TaskInfo tInfo = new TaskInfo();
-	    	  tInfo.setUuid("DefaultUUID");
-	    	  tInfo.setMasterId("DefaultMasterID");
-	    	  tInfo.setWorkerId("DefaultWorkerID");
-	    	  tInfo.setTaskSize(12);
-		      tInfo.setReceiveTime(new Timestamp(System.currentTimeMillis()));
-		      Thread.sleep(2184);
-		      tInfo.setTransferTime(new Timestamp(System.currentTimeMillis()));
-		      Thread.sleep(3184);
-		      tInfo.setStartTime(new Timestamp(System.currentTimeMillis()));
-		      Thread.sleep(1184);
-		      tInfo.setFinishTime(new Timestamp(System.currentTimeMillis()));
-		      Thread.sleep(2184);
-		      
-		      lManager.logTask(tInfo);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-	      System.out.println(lManager.readTaskLog());
+//	      LogManager lManager = new LogManager();
+//	      SystemUsageInfo uInfo = new SystemUsage().getInfo();
+//	      lManager.logSystemUsage(uInfo);
+//	      System.out.println(lManager.readSystemUsageLog());
+//	     
+//	      try {
+//	    	  
+//	    	  TaskInfo tInfo = new TaskInfo();
+//	    	  tInfo.setUuid("DefaultUUID");
+//	    	  tInfo.setMasterId("DefaultMasterID");
+//	    	  tInfo.setWorkerId("DefaultWorkerID");
+//	    	  tInfo.setTaskSize(12);
+//		      tInfo.setReceiveTime(new Timestamp(System.currentTimeMillis()));
+//		      Thread.sleep(2184);
+//		      tInfo.setTransferTime(new Timestamp(System.currentTimeMillis()));
+//		      Thread.sleep(3184);
+//		      tInfo.setStartTime(new Timestamp(System.currentTimeMillis()));
+//		      Thread.sleep(1184);
+//		      tInfo.setFinishTime(new Timestamp(System.currentTimeMillis()));
+//		      Thread.sleep(2184);
+//		      
+//		      lManager.logTask(tInfo);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//	      System.out.println(lManager.readTaskLog());
 
-	   
+		LogManager lManager = new LogManager();
+		lManager.logInstance("start", 0);
+		lManager.logInstance("terminate", 1);
 		}
 
 }

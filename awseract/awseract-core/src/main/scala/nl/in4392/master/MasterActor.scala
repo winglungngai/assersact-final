@@ -71,7 +71,7 @@ class MasterActor extends Actor with ActorLogging {
     case ReportSystemInfo(workerId,json) =>
       val uInfo = new SystemUsage().FromJson(json)
       new LogManager().logSystemUsage(uInfo)
-      println("Master receives SystemInfo from monitor " + workerId)
+      //println("Master receives SystemInfo from monitor " + workerId)
 
 
 
@@ -114,10 +114,10 @@ class MasterActor extends Actor with ActorLogging {
             log.debug("Task {} is completed by worker {}",taskId,workerId)
             workers += (workerId  -> value.copy(status=Idle))
             new LogManager().logTask(new TaskInfo().FromJson(taskInfo))
-            println("The result is {}",result.toString, taskInfo.toString())         //here we need to present the result to the webinterface
+            //println("The result is {}",result.toString, taskInfo.toString())         //here we need to present the result to the webinterface
             //add some ack
           }
-        case _ => println("[Master][TaskCompleted] I dunno how I came here")
+        case _ => //println("[Master][TaskCompleted] I dunno how I came here")
       }
     case TaskFailed(workerId,taskId,taskInfo) =>
       workers.get(workerId) match {
@@ -128,11 +128,11 @@ class MasterActor extends Actor with ActorLogging {
             jobQueue = jobQueue enqueue task
             notifyWorkers() //assign this task to another work
           }
-        case _ =>  println("[Master][TaskFailed] I dunno how I came here")
+        case _ =>  //println("[Master][TaskFailed] I dunno how I came here")
       }
 
     case task: Task =>
-      println("Received task: {}", task.taskInfo.toString())
+      //println("Received task: {}", task.taskInfo.toString())
       var tInfo = new TaskInfo().FromJson(task.taskInfo)
       tInfo.setMasterId(instanceId)
       tInfo.setReceiveTime(new Timestamp(System.currentTimeMillis()))
@@ -148,7 +148,7 @@ class MasterActor extends Actor with ActorLogging {
       workers.foreach {
         case (_, WorkerState(worker,Idle)) =>
           worker ! TaskAvailable
-        case _ => println("[Master][NotifyWorker] I dunno how I came here")
+        case _ => //println("[Master][NotifyWorker] I dunno how I came here")
       }
     }
   }

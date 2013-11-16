@@ -33,7 +33,7 @@ class MonitorActor(workerId:String,masterPath: ActorPath) extends Actor with Act
       sInfo.setInstanceId(instanceId)
       sInfo.setWorkerId(instanceId)
       master ! ReportSystemInfo(workerId, new SystemUsage().ToJson(sInfo))
-      println("MonitoringActor " + workerId + " sends SystemInfo")
+      //println("MonitoringActor " + workerId + " sends SystemInfo")
       context.system.scheduler.scheduleOnce(20 seconds, self, RequestSystemInfo)
   }
 

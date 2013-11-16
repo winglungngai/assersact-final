@@ -79,6 +79,9 @@ class MasterActor extends Actor with ActorLogging {
       if (!workers.contains(workerId)) {
         workers += (workerId -> WorkerState(sender, status = Idle))
         println("Registered Worker: {}",workerId)
+
+        if(!jobQueue.isEmpty)
+          sender ! TaskAvailable
       }
 
     case WorkerDeregister(workerId) =>
@@ -86,8 +89,6 @@ class MasterActor extends Actor with ActorLogging {
         workers = workers - workerId
         println("Deregistered Worker: {}",workerId)
 
-        if(!jobQueue.isEmpty)
-          sender ! TaskAvailable
       }
 
     //http://stackoverflow.com/questions/10433539/how-to-use-a-map-value-in-a-match-case-statement-in-scala

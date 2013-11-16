@@ -47,7 +47,7 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       if(jobs_count > 0 ||  workers.size < 1 )  {
         println(" > 0 ={} jobs pending or less than 1 workers {}", jobs_count, workers.size)
-        val instanceId = ec2.runNewInstance("ami-d281b797");
+        val instanceId = ec2.runNewInstance("ami-028eb847");
         val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()
         ec2.configureInstance(masterPublicIP, instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
         println("starting new worker instance ", instanceId)

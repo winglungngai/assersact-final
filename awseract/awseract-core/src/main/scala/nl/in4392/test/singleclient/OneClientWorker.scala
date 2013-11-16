@@ -125,7 +125,7 @@ class OneClientWorker extends Bootable {
    var bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_2.JPG"))
    val byteArraySmall = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
-    bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_3.PNG"))
+    bis = new BufferedInputStream(new FileInputStream("./src/main/resources/TEST_4.jpg"))
     val byteArrayLarge = Stream.continually(bis.read).takeWhile(-1 !=).map(_.toByte).toArray
 
    var tInfo = new TaskInfo()

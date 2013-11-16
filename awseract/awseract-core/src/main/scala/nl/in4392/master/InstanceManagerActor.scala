@@ -11,6 +11,7 @@ import nl.tudelft.ec2interface.instancemanager.EC2Interface;
 import main.scala.nl.in4392.models.WorkerStatusProtocol.WorkerState
 import main.scala.nl.in4392.models.WorkerStatusProtocol._
 import nl.tudelft.ec2interface.instancemanager._
+import nl.tudelft.ec2interface.logging.LogManager
 
 
 class InstanceManagerActor extends Actor with ActorLogging {
@@ -44,23 +45,25 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       val ec2 = new EC2Interface("conf/AwsCredentials.properties")
 
-      if(jobs_count > 100 ||  workers.size < 3 )  {
-        println("> 100 jobs pending {} or less than 3 workers {}", jobs_count, workers.size)
+      if(jobs_count > 0 ||  workers.size < 1 )  {
+        println(" > 0 ={} jobs pending or less than 1 workers {}", jobs_count, workers.size)
         val instanceId = ec2.runNewInstance("ami-d281b797");
         val masterPublicIP = new RemoteActorInfo().getInfoFromFile("conf/masterInfo").getPublicIP()
         ec2.configureInstance(masterPublicIP, instanceId, "conf/remoteConfigureWorker.sh", "conf/joseph_wing.pem");
         println("starting new worker instance ", instanceId)
+        new LogManager().logInstance("start", workers.size)
       }
       else if ( idle_size > 0 )
       {
-        if ( workers.size > 1 && workers.size/idle_size < 3)
-        {
-          println("> more than 1 workers and worker/idle < 3", workers.size, idle_size)
-          val toDeleted = workers_idle.keys.last
-          ec2.terminateInstance(toDeleted)
-          masterActor ! WorkerDeregister(toDeleted)
-          println("workersSize / idleSize 3 ", workers.size , idle_size)
-        }
+//        if ( workers.size > 1 && workers.size/idle_size < 3)
+//        {
+//          println("> more than 1 workers and worker/idle < 3", workers.size, idle_size)
+//          val toDeleted = workers_idle.keys.last
+//          ec2.terminateInstance(toDeleted)
+//          masterActor ! WorkerDeregister(toDeleted)
+//          println("workersSize / idleSize 3 ", workers.size , idle_size)
+//          new LogManager().logInstance("terminate", workers.size)
+//        }
 
       }
 

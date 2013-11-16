@@ -16,6 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `instance`
+--
+
+DROP TABLE IF EXISTS `instance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `instance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `action` varchar(100) NOT NULL,
+  `instanceCount` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `task`
 --
 
@@ -33,17 +49,8 @@ CREATE TABLE `task` (
   `finishTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `taskSize` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `task`
---
-
-LOCK TABLES `task` WRITE;
-/*!40000 ALTER TABLE `task` DISABLE KEYS */;
-/*!40000 ALTER TABLE `task` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `usage`
@@ -71,17 +78,8 @@ CREATE TABLE `usage` (
   `diskspaceUsed` int(11) NOT NULL,
   `diskspaceUsage` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `usage`
---
-
-LOCK TABLES `usage` WRITE;
-/*!40000 ALTER TABLE `usage` DISABLE KEYS */;
-/*!40000 ALTER TABLE `usage` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -92,4 +90,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-11-10 15:40:26
+-- Dump completed on 2013-11-16 10:54:11

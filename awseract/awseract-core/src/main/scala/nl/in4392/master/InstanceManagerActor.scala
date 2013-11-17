@@ -45,6 +45,9 @@ class InstanceManagerActor extends Actor with ActorLogging {
 
       val ec2 = new EC2Interface("conf/AwsCredentials.properties")
 
+      //val faultyWorkers = new LogManager().noResponse(workers, 240));
+      //ec2.terminateInstance(faultyWorkers)
+        
       if( workers.size < 1 || (jobs_count/workers.size) > 500)  {
         println(" > 0 ={} jobs pending or less than 1 workers {}", jobs_count, workers.size)
         val instanceId = ec2.runNewInstance("ami-028eb847");

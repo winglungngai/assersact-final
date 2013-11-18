@@ -1,0 +1,144 @@
+select receiveTime , finishTime from task where (UNIX_TIMESTAMP(finishTime) - UNIX_TIMESTAMP(receiveTime)) < 200;
+select max((UNIX_TIMESTAMP(startTime) - UNIX_TIMESTAMP(transferTime))), receiveTime , startTime, finishTime from task;
+select (UNIX_TIMESTAMP(finishTime) - UNIX_TIMESTAMP(startTime)) from task where (UNIX_TIMESTAMP(finishTime) - UNIX_TIMESTAMP(startTime)) > 3;
+
+select finishTime, id from task into outfile '/tmp/finishTime';
+
+
+set xdata time
+set timefmt "%Y-%m-%d %H:%M:%S"
+set xrange ["2013-11-16 14:27:00":"2013-11-16 16:50:00"]
+plot 'finishTime' using 1:3 with linespoints
+
+1384621816
+
+# get the first timestamp of the dataset;
+select min(UNIX_TIMESTAMP(receiveTime)) from task;
+Dataset 1	1384607869
+Dataset 2	1384617850
+Dataset 3	1384628605
+
+
+
+
+select UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(receiveTime) from task;
+
+
+
+select makespan, @curRow := @curRow + 1 AS row_number from (select (UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(receiveTime)) as makespan from task order by makespan) makespan JOIN (SELECT @curRow := 0) r;
+
+
+
+# Makespan dataselection
+use systemlog1
+select (UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(receiveTime)) as makespan from task order by makespan Into outfile '/tmp/makespan1'
+use systemlog2
+select (UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(receiveTime)) as makespan from task order by makespan Into outfile '/tmp/makespan2'
+use systemlog3
+select (UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(receiveTime)) as makespan from task order by makespan Into outfile '/tmp/makespan3'
+
+
+# Makespan Histogram Generation
+set title "Histogram of Task Makespan"
+set xlabel "Task Makespan (seconds)"
+set ylabel "Frequency"
+
+binwidth=50
+bin(x,width)=width*floor(x/width)
+
+set yrange [0:1500]
+
+plot 'makespan1' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'single worker = 1', \
+ 'makespan2' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'static workers = 5', \
+ 'makespan3' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'dynamic workers < 5'
+
+
+
+
+
+# Machines:
+# get the first timestamp of the dataset;
+select min(UNIX_TIMESTAMP(timestamp)) from instance;
+Dataset 1	1384608593
+Dataset 2	1384618575
+Dataset 3	1384629328
+
+select UNIX_TIMESTAMP(timestamp)-1384608593 as time, action, instanceCount from instance Into outfile '/tmp/instance1';
+select UNIX_TIMESTAMP(timestamp)-1384618575 as time, action, instanceCount from instance Into outfile '/tmp/instance2';
+select UNIX_TIMESTAMP(timestamp)-1384629328 as time, action, instanceCount from instance Into outfile '/tmp/instance3';
+
+#plot machine usage
+set title "Utilization of EC2 Instance"
+set xlabel "Runtime (seconds)"
+set ylabel "Number of Worker Instances"
+
+set yrange [0:7]
+plot  'instance1' with linespoints pt 4 title 'single worker = 1', \
+ 'instance2' with linespoints pt 5 title 'static workers = 5', \
+ 'instance3' with linespoints pt 3 title 'dynamic workers < 5'
+
+# diff times;
+
+select min(UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(startTime)) as minProcessingTime from task;
+select max(UNIX_TIMESTAMP(finishTime)-UNIX_TIMESTAMP(startTime)) as maxProcessingTime from task;
+
+select min(UNIX_TIMESTAMP(startTime)-UNIX_TIMESTAMP(transferTime)) as minNetWorkTime from task;
+select max(UNIX_TIMESTAMP(startTime)-UNIX_TIMESTAMP(transferTime)) as maxNetWorkTime from task;
+
+select min(UNIX_TIMESTAMP(transferTime)-UNIX_TIMESTAMP(receiveTime)) as minQueueTime from task;
+select max(UNIX_TIMESTAMP(transferTime)-UNIX_TIMESTAMP(receiveTime)) as maxQueueTime from task;
+
+[0,4] [-1,1] [17,6649]
+[0,2] [-1,1] [0, 3966]
+[0,3] [0,1] [5,1674]
+
+#plot queueTime
+
+select (UNIX_TIMESTAMP(transferTime)-UNIX_TIMESTAMP(receiveTime)) as queueTime from task order by queueTime Into outfile '/tmp/queueTime1';
+select (UNIX_TIMESTAMP(transferTime)-UNIX_TIMESTAMP(receiveTime)) as queueTime from task order by queueTime Into outfile '/tmp/queueTime2';
+select (UNIX_TIMESTAMP(transferTime)-UNIX_TIMESTAMP(receiveTime)) as queueTime from task order by queueTime Into outfile '/tmp/queueTime3';
+
+set title "Histogram of Task QueueTime"
+set xlabel "Task QueueTime (seconds)"
+set ylabel "Frequency"
+
+binwidth=50
+bin(x,width)=width*floor(x/width)
+
+set yrange [0:1500]
+
+plot 'queueTime1' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'single worker = 1', \
+ 'queueTime2' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'static workers = 5', \
+ 'queueTime3' using (bin($1,binwidth)):(1.0) smooth freq with boxes title 'dynamic workers < 5'
+
+
+
+
+# plot finishTime
+
+select min(UNIX_TIMESTAMP(finishTime)) as minFinishTime from task;
+
+1384608703
+1384621817
+1384628749 
+
+select finishingTime, @curRow := @curRow + 1 AS row_number from (select (UNIX_TIMESTAMP(finishTime)-1384608703) as finishingTime from task order by finishingTime) finishingTime JOIN (SELECT @curRow := 0) r Into outfile '/tmp/finishTime1';
+
+select finishingTime, @curRow := @curRow + 1 AS row_number from (select (UNIX_TIMESTAMP(finishTime)-1384621817) as finishingTime from task order by finishingTime) finishingTime JOIN (SELECT @curRow := 0) r Into outfile '/tmp/finishTime2';
+
+select finishingTime, @curRow := @curRow + 1 AS row_number from (select (UNIX_TIMESTAMP(finishTime)-1384628749-288) as finishingTime from task order by finishingTime) finishingTime JOIN (SELECT @curRow := 0) r Into outfile '/tmp/finishTime6';
+
+set title "Completed Tasks, Running Worker Instance"
+set xlabel "Runtime (seconds)"
+set ylabel "Number of Completed Tasks"
+set y2label "Number of Running Worker Instances"
+set yrange [y1min:y1max]
+set y2range [0:10]
+
+plot 'finishTime1' with lines title 'CompletedTask[single worker = 1]', \
+ 'finishTime2' with lines title 'CompletedTask[static workers = 5]', \
+ 'finishTime3' with lines title 'CompletedTask[dynamic workers < 5]', \
+ 'instance1' axes x1y2  with linespoints pt 4 title 'RunningInstance[single worker = 1]', \
+ 'instance2' axes x1y2  with linespoints pt 5 title 'RunningInstance[static workers = 5]', \
+ 'instance3' axes x1y2  with linespoints pt 3 title 'RunningInstance[dynamic workers < 5]'
+
